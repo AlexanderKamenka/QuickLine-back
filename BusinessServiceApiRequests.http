@@ -1,0 +1,182 @@
+### Переменные для использования в запросах
+@host = http://localhost:8080
+@contentType = application/json
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc1OTAyMDk2OSwiZXhwIjoxNzU5MTA3MzY5fQ.6chL3HBl6Z0wLjT9Atojl9Qwut7WFvA1GSCE6Jw_JvQ
+@userId = 1
+@businessId = 3
+@serviceId = 1
+@queueId = 2
+
+### Регистрация пользователя
+POST {{host}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Аутентификация пользователя
+POST {{host}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### БИЗНЕС (САЛОН) CRUD ###
+
+### Получение списка всех бизнесов
+GET {{host}}/api/businesses
+Authorization: Bearer {{token}}
+
+### Создание нового бизнеса
+POST {{host}}/api/businesses
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Салон красоты 'Элегант'",
+  "description": "Современный салон красоты с полным спектром услуг",
+  "address": "ул. Пушкина, д. 10",
+  "phoneNumber": "+7 (123) 456-78-90",
+  "owner": {
+    "id": {{userId}}
+  }
+}
+
+### Получение бизнеса по ID
+GET {{host}}/api/businesses/{{businessId}}
+Authorization: Bearer {{token}}
+
+### Получение всех бизнесов конкретного владельца
+GET {{host}}/api/businesses/owner/{{userId}}
+Authorization: Bearer {{token}}
+
+### Обновление информации о бизнесе
+PUT {{host}}/api/businesses/{{businessId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Салон красоты 'Элегант Люкс'",
+  "description": "Обновленное описание салона красоты",
+  "address": "ул. Пушкина, д. 10, офис 2",
+  "phoneNumber": "+7 (123) 456-78-91"
+}
+
+### Удаление бизнеса
+DELETE {{host}}/api/businesses/{{businessId}}
+Authorization: Bearer {{token}}
+
+### СЕРВИСЫ ###
+
+### Создание услуги для бизнеса
+POST {{host}}/api/businesses/{{businessId}}/services
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Стрижка женская",
+  "description": "Модельная стрижка женская",
+  "price": 1500,
+  "durationMinutes": 60
+}
+
+### Получение всех услуг бизнеса
+GET {{host}}/api/businesses/{{businessId}}/services
+Authorization: Bearer {{token}}
+
+### Получение услуги по ID
+GET {{host}}/api/businesses/{{businessId}}/services/{{serviceId}}
+Authorization: Bearer {{token}}
+
+### Обновление услуги
+PUT {{host}}/api/businesses/{{businessId}}/services/{{serviceId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Стрижка женская премиум",
+  "description": "Модельная стрижка женская с укладкой",
+  "price": 2000,
+  "durationMinutes": 90
+}
+
+### Удаление услуги
+DELETE {{host}}/api/businesses/{{businessId}}/services/{{serviceId}}
+Authorization: Bearer {{token}}
+
+### ОЧЕРЕДИ / ЗАПИСИ ###
+
+### Создание новой записи в очередь
+POST {{host}}/api/queues
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "business": {
+    "id": {{businessId}}
+  },
+  "service": {
+    "id": {{serviceId}}
+  },
+  "client": {
+    "id": {{userId}}
+  },
+  "clientName": "Иван Иванов",
+  "clientPhone": "+7 (987) 654-32-10",
+  "appointmentTime": "2023-10-15T14:30:00",
+  "status": "PENDING"
+}
+
+### Получение записи по ID
+GET {{host}}/api/queues/{{queueId}}
+Authorization: Bearer {{token}}
+
+### Получение всех записей для бизнеса
+GET {{host}}/api/queues/business/{{businessId}}
+Authorization: Bearer {{token}}
+
+### Получение всех записей клиента
+GET {{host}}/api/queues/client/{{userId}}
+Authorization: Bearer {{token}}
+
+### Получение всех записей для бизнеса на конкретную дату
+GET {{host}}/api/queues/business/{{businessId}}/date/2023-10-15
+Authorization: Bearer {{token}}
+
+### Обновление статуса записи
+PATCH {{host}}/api/queues/{{queueId}}/status?status=CONFIRMED
+Authorization: Bearer {{token}}
+
+### Удаление записи
+DELETE {{host}}/api/queues/{{queueId}}
+Authorization: Bearer {{token}}
+
+### ДОПОЛНИТЕЛЬНЫЕ ЗАПРОСЫ ###
+
+### Получение доступных временных слотов бизнеса на дату (предполагая, что вы добавите такой функционал)
+GET {{host}}/api/businesses/{{businessId}}/available-slots?date=2023-10-15
+Authorization: Bearer {{token}}
+
+### Получение статистики бизнеса (посещаемость, доходы и т.д.)
+GET {{host}}/api/businesses/{{businessId}}/statistics?from=2023-09-01&to=2023-09-30
+Authorization: Bearer {{token}}
+
+### Получение отзывов о бизнесе (если будет добавлен такой функционал)
+GET {{host}}/api/businesses/{{businessId}}/reviews
+Authorization: Bearer {{token}}
+
+### Добавление отзыва о бизнесе
+POST {{host}}/api/businesses/{{businessId}}/reviews
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "rating": 5,
+  "comment": "Отличный сервис, очень доволен!",
+  "userId": {{userId}}
+}
