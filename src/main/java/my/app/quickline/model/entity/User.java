@@ -1,10 +1,6 @@
 package my.app.quickline.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,27 +10,56 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
+@Entity
+@Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String username;
+
     private String email;
+
+    @Column(unique = true)
+    private String phoneNumber;
+
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.CLIENT;
+
+    public enum Role {
+        OWNER,
+        CLIENT
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Для простоты, присваиваем всем пользователям роль USER
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + role.name())
+        );
+    }
+
+    @Override
+    public String getPassword() {
+        // ✅ ИСПРАВЛЕНИЕ: Никогда не возвращаем null
+        return password != null ? password : "";
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override

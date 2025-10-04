@@ -42,4 +42,8 @@ public class BusinessService {
         Business business = getBusinessById(id);
         businessRepository.delete(business);
     }
+
+    public List<Business> getAllBusinesses() {
+        return businessRepository.findAll();
+    }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import my.app.quickline.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,7 +37,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- добавляем CORS
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/businesses").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/businesses/{id}").permitAll()
+                        .requestMatchers("/api/verification/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/queues").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/queues/*").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/businesses/{businessId}/services").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/businesses/{businessId}/services/{serviceId}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

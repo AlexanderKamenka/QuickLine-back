@@ -44,4 +44,9 @@ public class BusinessController {
         businessService.deleteBusiness(id);
         return ResponseEntity.noContent().build();
     }
+    // НОВЫЙ ЭНДПОИНТ - получить все бизнесы (для публичной страницы)
+    @GetMapping
+    public ResponseEntity<List<Business>> getAllBusinesses() {
+        return ResponseEntity.ok(businessService.getAllBusinesses());
+    }
 }
